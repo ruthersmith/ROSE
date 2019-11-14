@@ -7,7 +7,7 @@ very good driver but the implementation is very elegant.
 import random
 from rose.common import obstacles, actions  # NOQA
 
-driver_name = "Random Driver"
+driver_name = f'Random#{random.randint(1000, 9999)}'
 
 
 def drive(world):

@@ -188,7 +188,6 @@ class WebAdmin(resource.Resource):
             else:
                 request.setResponseCode(http.BAD_REQUEST)
                 return bytes(f"Invalid running value {value}, expected (1, 0)", 'utf-8')
-                #return b"Invalid running value %r, expected (1, 0)" % value
         if b"rate" in request.args:
             value = request.args[b"rate"][0].decode()
             try:
@@ -196,5 +195,4 @@ class WebAdmin(resource.Resource):
             except ValueError:
                 request.setResponseCode(http.BAD_REQUEST)
                 return bytes(f"Invalid rate value {value}, expected number", 'utf-8')
-                #return b"Invalid rate value %r, expected number" % value
         return b""

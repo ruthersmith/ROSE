@@ -19,12 +19,11 @@ def main():
     h = net.Hub(g)
     reactor.listenTCP(config.game_port, net.PlayerFactory(h))
     root = static.File(config.web_root)
-    #wsuri = u"ws://%s:%s" % (socket.gethostname(), config.web_port)
-    wsuri = f"ws://{socket.gethostname()}:{config.web_port}/ws"
+    wsuri = f'ws://{socket.gethostname()}:{config.web_port}/ws'
     watcher = net.WatcherFactory(wsuri, h)
-    root.putChild(b"ws", WebSocketResource(watcher))
-    root.putChild(b"admin", net.WebAdmin(g))
-    root.putChild(b"rpc2", net.CliAdmin(g))
+    root.putChild(b'ws', WebSocketResource(watcher))
+    root.putChild(b'admin', net.WebAdmin(g))
+    root.putChild(b'rpc2', net.CliAdmin(g))
     site = server.Site(root)
     reactor.listenTCP(config.web_port, site)
     reactor.run()

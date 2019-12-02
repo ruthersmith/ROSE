@@ -21,15 +21,22 @@
 	<div class="container">
 		<div class="row" id="loading">
 			<div class="col-12">
-				<div class="card"><div class="card-body">Loading resources...</div></div>
+				<div class="alert alert-info" role="alert">Loading resources...</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-3">
 				<div class="card">
-				<div class="card-header">Connected user(s)</div>
-					<ul class="list-group list-group-flush" id="player-list">
-					</ul>
+					<div class="card-header">Players</div>
+					<table class="table table-sm table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Name</th>
+								<th scope="col">Score</th>
+							</tr>
+						</thead>
+						<tbody id="player-list-body"></tbody>
+					</table>
 				</div>
 			</div>
 			<div class="col-9">

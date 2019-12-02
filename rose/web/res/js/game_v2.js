@@ -36,7 +36,6 @@ function loadImage(src) {
 	const img = new Image();
 	img.onload = function () {
 		config.loadingCompleted++;
-		console.log(config.loadingCompleted);
 	}
 	img.src = src;
 	return img;
@@ -99,17 +98,22 @@ function updateStartedDisplay(started) {
 	document.getElementById('control-button').innerText = started ? 'Stop' : 'Start';
 }
 function updatePlayerDisplay(players) {
-	const playerList = document.getElementById('player-list');
-	playerList.innerHTML = '';
+	const playerListBody = document.getElementById('player-list-body');
+	playerListBody.innerHTML = '';
 	if (players.length === 0) {
 		setMessage('No players connected.');
 		return;
 	}
 	for (const player of players) {
-		const playerElement = document.createElement('li');
-		playerElement.textContent = player.name;
-		playerElement.setAttribute('class', 'list-group-item');
-		playerList.appendChild(playerElement);
+		const row = document.createElement('tr');
+		const name = document.createElement('th');
+		const score = document.createElement('td');
+		name.setAttribute('scope', 'row');
+		name.innerText = player.name;
+		score.innerText = player.score;
+		row.appendChild(name);
+		row.appendChild(score);
+		playerListBody.appendChild(row);
 	}
 	setMessage('');
 }

@@ -1,9 +1,10 @@
 const config = {};
 window.onload = function () {
-	const websocket = new WebSocket('ws://' + window.location.hostname + ':8880/ws');
 	const controlButton = document.getElementById('control-button');
 	const fpsDecreaseButton = document.getElementById('fps-decrease-button');
 	const fpsIncreaseButton = document.getElementById('fps-increase-button');
+	config.loadingTotal = 14;
+	config.loadingCompleted = 0;
 	config.trackImages = loadImages(['res/bg/bg_1.png', 'res/bg/bg_2.png', 'res/bg/bg_3.png']);
 	config.carImages = loadImages(['res/cars/car1.png', 'res/cars/car2.png', 'res/cars/car3.png', 'res/cars/car4.png']);
 	config.obstacleImages = {
@@ -15,16 +16,28 @@ window.onload = function () {
 		'water': loadImage('res/obstacles/water.png')
 	};
 	config.finishLineImage = loadImage('res/end/final_flag.png');
-	websocket.onopen = function () {
-		console.log ('websocket connected!');
-	};
-	websocket.onmessage = handleWebSocketMessageEvent;
+	loadingTimer = setTimeout(function () {
+		if (config.loadingTotal !== config.loadingCompleted) {
+			return;
+		}
+		clearTimeout(loadingTimer);
+		const websocket = new WebSocket('ws://' + window.location.hostname + ':8880/ws');
+		document.getElementById('loading').remove();
+		websocket.onopen = function () {
+			console.log ('websocket connected!');
+		};
+		websocket.onmessage = handleWebSocketMessageEvent;
+	}, 300);
 	controlButton.onclick = handleControlButtonClickEvent;
 	fpsDecreaseButton.onclick = handleFpsDecreaseClickEvent;
 	fpsIncreaseButton.onclick = handleFpsIncreaseClickEvent;
 }
 function loadImage(src) {
 	const img = new Image();
+	img.onload = function () {
+		config.loadingCompleted++;
+		console.log(config.loadingCompleted);
+	}
 	img.src = src;
 	return img;
 }

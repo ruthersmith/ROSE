@@ -3,49 +3,80 @@ window.onload = function () {
 	const controlButton = document.getElementById('control-button');
 	const fpsDecreaseButton = document.getElementById('fps-decrease-button');
 	const fpsIncreaseButton = document.getElementById('fps-increase-button');
-	config.loadingTotal = 14;
-	config.loadingCompleted = 0;
-	config.trackImages = loadImages(['res/bg/bg_1.png', 'res/bg/bg_2.png', 'res/bg/bg_3.png']);
-	config.carImages = loadImages(['res/cars/car1.png', 'res/cars/car2.png', 'res/cars/car3.png', 'res/cars/car4.png']);
-	config.obstacleImages = {
-		'barrier': loadImage('res/obstacles/barrier.png'),
-		'bike': loadImage('res/obstacles/bike.png'),
-		'crack': loadImage('res/obstacles/crack.png'),
-		'penguin': loadImage('res/obstacles/penguin.png'),
-		'trash': loadImage('res/obstacles/trash.png'),
-		'water': loadImage('res/obstacles/water.png')
+	config.resources = {
+		'objects': {
+			'trackImages': {
+				'bg1': 'res/bg/bg_1.png',
+				'bg2': 'res/bg/bg_2.png',
+				'bg3': 'res/bg/bg_3.png'
+			},
+			'carImages': {
+				'yellow': 'res/cars/car1.png',
+				'green': 'res/cars/car2.png',
+				'cyan': 'res/cars/car3.png',
+				'purple': 'res/cars/car4.png'
+			},
+			'obstacleImages': {
+				'barrier': 'res/obstacles/barrier.png',
+				'bike': 'res/obstacles/bike.png',
+				'crack': 'res/obstacles/crack.png',
+				'penguin': 'res/obstacles/penguin.png',
+				'trash': 'res/obstacles/trash.png',
+				'water': 'res/obstacles/water.png'
+			},
+			'finishLineImages': {
+				'line': 'res/end/final_flag.png'
+			}
+		},
+		'status': {}
 	};
-	config.finishLineImage = loadImage('res/end/final_flag.png');
+	preloadResources();
 	loadingTimer = setTimeout(function () {
-		if (config.loadingTotal !== config.loadingCompleted) {
+		if (!config.resources.status.preloadSet) {
+			return;
+		} else if (config.resources.status.preloadCount !== config.resources.status.completedCount) {
 			return;
 		}
 		clearTimeout(loadingTimer);
+		config.trackImages = initalizeResources('trackImages');
+		config.carImages = initalizeResources('carImages');
 		const websocket = new WebSocket('ws://' + window.location.hostname + ':8880/ws');
 		document.getElementById('loading').remove();
-		websocket.onopen = function () {
+		/*websocket.onopen = function () {
 			console.log ('websocket connected!');
-		};
+		};*/
 		websocket.onmessage = handleWebSocketMessageEvent;
 	}, 300);
 	controlButton.onclick = handleControlButtonClickEvent;
 	fpsDecreaseButton.onclick = handleFpsDecreaseClickEvent;
 	fpsIncreaseButton.onclick = handleFpsIncreaseClickEvent;
 }
-function loadImage(src) {
-	const img = new Image();
-	img.onload = function () {
-		config.loadingCompleted++;
-	}
-	img.src = src;
-	return img;
-}
-function loadImages(sources) {
+function initalizeResources(category) {
 	const images = [];
-	for (source of sources) {
-		images.push(loadImage(source));
+	for (image in config.resources.objects[category]) {
+		images.push(config.resources.objects[category][image]);
 	}
-	return images;
+	return images
+}
+function preloadResources() {
+	config.resources.status = {
+		'preloadCount': 0,
+		'preloadSet': false,
+		'completedCount': 0
+	};
+	Object.keys(config.resources.objects).forEach(function (categoryKey) {
+		const currentCategory = config.resources.objects[categoryKey];
+		Object.keys(currentCategory).forEach(function (objectKey) {
+			config.resources.status.preloadCount++;
+			const img = new Image();
+			img.onload = function () {
+				config.resources.status.completedCount++;
+			};
+			img.src = currentCategory[objectKey];
+			config.resources.objects[categoryKey][objectKey] = img;
+		});
+	});
+	config.resources.status.preloadSet = true;
 }
 function post(url, data = '', callback = function () {}) {
 	const xhr = new XMLHttpRequest();
@@ -149,7 +180,7 @@ function drawCar() {
 function drawObstacle() {
 	const context = getGameContext();
 	for (const obstacle of config.payload.track) {
-		const img = config.obstacleImages[obstacle['name']];
+		const img = config.resources.objects.obstacleImages[obstacle['name']];
 		const x = 95 + obstacle['x'] * 130;
 		const y = 10 + obstacle['y'] * 65;
 		context.drawImage(img, x, y);
@@ -161,11 +192,11 @@ function drawFinishLine() {
 		return;
 	}
 	const y = 65 * (5 - timeLeft);
-	getGameContext().drawImage(config.finishLineImage, 0, y);
+	getGameContext().drawImage(config.resources.objects.finishLineImages['line'], 0, y);
 }
 function handleWebSocketMessageEvent(event) {
 	msg = JSON.parse(event.data);
-	console.log(msg);
+	//console.log(msg);
 	if (msg.action !== 'update') {
 		return;
 	}

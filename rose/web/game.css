@@ -35,7 +35,7 @@ body {
     background-color: #222;
 }
 
-#start, #stop {
+#start, #stop, #kill_losers {
     width: 120px;
     padding: 8px 24px;
     margin: 0;

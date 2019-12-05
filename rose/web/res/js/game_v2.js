@@ -196,7 +196,7 @@ function drawFinishLine() {
 }
 function handleWebSocketMessageEvent(event) {
 	msg = JSON.parse(event.data);
-	//console.log(msg);
+	console.log(msg);
 	if (msg.action !== 'update') {
 		return;
 	}

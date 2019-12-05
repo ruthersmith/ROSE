@@ -32,18 +32,6 @@ class Hub(object):
             self.clients.remove(player)
             self.game.remove_player(player.name)
 
-    def remove_loser_client(self,winner_name):
-
-        for client in self.clients.copy():
-            try:
-                if (client.name != winner_name):
-                    self.clients.remove(client)
-                    print(f" removing client: ---------> {client.name}")
-            except AttributeError:
-                print("watcher no name known")
-
-
-
     def drive_player(self, player, info):
         self.game.drive_player(player.name, info)
 
@@ -200,7 +188,6 @@ class WebAdmin(resource.Resource):
             else:
                 request.setResponseCode(http.BAD_REQUEST)
                 return bytes(f"Invalid running value {value}, expected (1, 0)", 'utf-8')
-                #return b"Invalid running value %r, expected (1, 0)" % value
         if b"rate" in request.args:
             value = request.args[b"rate"][0].decode()
             try:
@@ -208,12 +195,4 @@ class WebAdmin(resource.Resource):
             except ValueError:
                 request.setResponseCode(http.BAD_REQUEST)
                 return bytes(f"Invalid rate value {value}, expected number", 'utf-8')
-                #return b"Invalid rate value %r, expected number" % value
-
-        if b"winneris" in request.args:
-            winner = request.args[b"winneris"][0].decode()
-            log.info(f"from log: passing winner {winner}" )
-            self.game.remove_losers(winner)
-
         return b""
-

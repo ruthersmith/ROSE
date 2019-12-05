@@ -31,9 +31,21 @@ class Player(object):
         next_x = min_x + config.cells_per_player
         return min_x <= self.x < next_x
 
-    def __cmp__(self, other):
-        return cmp(self.score, other.score)
+    def __lt__(self, other):
+        return self.score < other.score
+    
+    def __eq__(self, other):
+    	return self.score == other.score
+	
+    def __gt__(self, other):
+        return self.score > other.score
 
+    def __le__(self, other):
+        return self.__eq__(other) or self.__lt__(other)
+    
+    def __ge__(self, other):
+        return self.__eq__(other) or self.__gt__(other)
+    
     def state(self):
         """ Return read only serialize-able state for sending to client """
         return {'name': self.name,

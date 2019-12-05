@@ -8,7 +8,7 @@ web_port = 8880
 # Server
 
 game_rate = 1.0
-game_duration = 60
+game_duration = 120
 number_of_cars = 4
 
 # Matrix
@@ -30,7 +30,7 @@ web_root = os.path.join(install_dir, "../web")
 
 # Player
 
-max_players = 2
+max_players = 3
 cells_per_player = matrix_width / max_players
 
 # Score Points

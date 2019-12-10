@@ -194,6 +194,30 @@ function drawFinishLine() {
 	const y = 65 * (5 - timeLeft);
 	getGameContext().drawImage(config.resources.objects.finishLineImages['line'], 0, y);
 }
+
+function handleGameOver() {
+	console.log('here now');
+	if (config.payload.started){
+		config.everStarted = true; //records if the game started at any point
+	}
+	if (config.everStarted && config.payload.timeleft < 1){
+		setMessage("Game Over");
+		addKillUserbtn();
+	}
+}
+
+function killLosers() {
+	console.log("killing users");
+}
+
+function addKillUserbtn() {
+	var btn = document.createElement("BUTTON");
+	btn.innerHTML = "Disconnect Losers";
+	// btn.classList.add("btn-outline-light");
+	btn.className += " btn-outline-light btn btn-link float-right";
+	btn.onclick = killLosers;
+	document.getElementById('message').appendChild(btn);
+}
 function handleWebSocketMessageEvent(event) {
 	msg = JSON.parse(event.data);
 	console.log(msg);
@@ -207,6 +231,7 @@ function handleWebSocketMessageEvent(event) {
 	updateTimeleftDisplay(payload.timeleft);
 	updateStartedDisplay(payload.started);
 	updatePlayerDisplay(payload.players);
+	handleGameOver();
 
 	updateTrack();
 	drawTrack();

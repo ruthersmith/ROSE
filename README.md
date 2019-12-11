@@ -47,22 +47,22 @@ Refer to our GitHub pages for the course materials and additional resources:
   on [opensource.com](https://opensource.com)
 
 
-## Requirements
+## Requirements for Linux/Mac
 
 First we need to get pipenv installed. The best way is to install it for
 your user:
 
     pip install --user pipenv
 
-Now we can use pipenv to install the rest of the dependencies, and
-create a virtual environment:
+Now we can use pipenv to install the rest of the dependencies,
+at the rose root directory, and create a virtual environment:
 
     pipenv install
 
 You can also install packages from your distribution, but they may be
 too old.
 
-## Running the server
+## Running the server on Linux/Mac
 
 Open a pipenv shell that you'll use for the following commands:
 
@@ -74,19 +74,65 @@ Start the server on some machine:
 
 Open a browser at http://\<server-address\>:8880 to view and control the game.
 
-## Running a driver
+## Running a driver on Linux/Mac
 
 Open a pipenv shell that you'll use for the following commands:
 
     pipenv shell
 
+## Requiremnts for windows
+	"On windows i think it's harder" - Dr. Santore
+
+First install python 3.8 avalible free at 
+
+	https://www.python.org/downloads/release/python-380/
+
+Next install Build Tools for Visual Studio 2019 to aquire dependencies for pipenv:
+Build Tools for Visual Studio 2019 can be found at:
+
+	https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019
+
+Then we need to get pipenv installed. The best way is to install it for
+your user is to open a command line prompt and type:
+
+    pip install --user pipenv
+
+Now we can use pipenv to install the rest of the dependencies,
+at the rose root directory, and create a virtual environment:
+
+    pipenv install
+
+You can also install packages from your distribution, but they may be
+too old.
+
+## Running the server on windows 
+
+Open a pipenv shell from the command line at the rose root directory
+for that you'll use for the following commands:
+
+    pipenv shell
+
+to start the server on some machines:
+
+    python rose-server
+
+Open a browser at http://\<server-address\>:8880 to view and control the game.
+the default address is http://localhost:8880/
+
+## Running a driver on windows
+
+Open a pipenv shell from the command line at the rose root directory
+for that you'll use for the following commands:
+
+    pipenv shell
+
 Start up the client, using your driver file:
 
-    ./rose-client mydriver.py
+    python rose-client mydriver.py
 
 The server address can be specified that way (Replace '10.20.30.44' with your server address):
 
-    ./rose-client -s 10.20.30.44 mydriver.py
+    python rose-client -s 10.20.30.44 mydriver.py
 
 For driver modules, see the [examples](examples) directory.
 

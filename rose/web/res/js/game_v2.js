@@ -211,7 +211,8 @@ function killLosers() {
 }
 
 /*
-	function find winner is going to be
+	function find winner. finds the first player with the highest score
+	does not consider a draw
  */
 function findWinner() {
 	let scoreBoard = {};

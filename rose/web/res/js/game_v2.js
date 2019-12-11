@@ -128,6 +128,25 @@ function updateTimeleftDisplay(timeleft) {
 function updateStartedDisplay(started) {
 	document.getElementById('control-button').innerText = started ? 'Stop' : 'Start';
 }
+function updateRaceFinishScreen(players) {
+    timeLeft = getTimeLeft();
+    if (timeLeft == 0) {
+        var highestScore = 0;
+        var highScorePlayer = "none";
+
+        for (const player of players) {
+            if (player.score > highestScore) {
+                highestScore = player.score;
+                highScorePlayer = player.name;
+            }
+        }
+
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById("overlayText").innerHTML = "Congratulations " + highScorePlayer + " Wins";
+		return;
+	}
+	document.getElementById('overlay').style.display = 'none';
+}
 function updatePlayerDisplay(players) {
 	const playerListBody = document.getElementById('player-list-body');
 	playerListBody.innerHTML = '';
@@ -194,6 +213,7 @@ function drawFinishLine() {
 	const y = 65 * (5 - timeLeft);
 	getGameContext().drawImage(config.resources.objects.finishLineImages['line'], 0, y);
 }
+
 function handleWebSocketMessageEvent(event) {
 	msg = JSON.parse(event.data);
 	console.log(msg);
@@ -207,6 +227,8 @@ function handleWebSocketMessageEvent(event) {
 	updateTimeleftDisplay(payload.timeleft);
 	updateStartedDisplay(payload.started);
 	updatePlayerDisplay(payload.players);
+
+	updateRaceFinishScreen(payload.players);
 
 	updateTrack();
 	drawTrack();

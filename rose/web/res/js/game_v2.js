@@ -196,7 +196,6 @@ function drawFinishLine() {
 }
 
 function handleGameOver() {
-	console.log('here now');
 	if (config.payload.started){
 		config.everStarted = true; //records if the game started at any point
 	}
@@ -207,13 +206,26 @@ function handleGameOver() {
 }
 
 function killLosers() {
-	console.log("killing users");
+	let winner = findWinner();
+	post('admin', 'winneris=' + winner);
+}
+
+/*
+	function find winner is going to be
+ */
+function findWinner() {
+	let scoreBoard = {};
+	config.payload.players.forEach(function (item,index) {
+		scoreBoard[item.name] = item.score;
+	});
+
+	let scoreArr = Object.values(scoreBoard);
+	return Object.keys(scoreBoard).find(key => scoreBoard[key] === Math.max(...scoreArr));
 }
 
 function addKillUserbtn() {
 	var btn = document.createElement("BUTTON");
 	btn.innerHTML = "Disconnect Losers";
-	// btn.classList.add("btn-outline-light");
 	btn.className += " btn-outline-light btn btn-link float-right";
 	btn.onclick = killLosers;
 	document.getElementById('message').appendChild(btn);

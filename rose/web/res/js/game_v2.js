@@ -207,7 +207,7 @@ function handleGameOver() {
 
 function killLosers() {
 	let winner = findWinner();
-	post('admin', 'winneris=' + winner);
+	post('admin', 'winneris=' + winner, setMessage("Losers remove from game, only Highest score stay"));
 }
 
 /*

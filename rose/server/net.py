@@ -195,4 +195,8 @@ class WebAdmin(resource.Resource):
             except ValueError:
                 request.setResponseCode(http.BAD_REQUEST)
                 return bytes(f"Invalid rate value {value}, expected number", 'utf-8')
+        if b"winneris" in request.args:
+            winner = request.args[b"winneris"][0].decode()
+            log.info(f"from log: passing winner {winner}")
+            self.game.remove_losers(winner)
         return b""

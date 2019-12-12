@@ -3,7 +3,7 @@ div#overlay {
   display: none;
   width: 100%;
   height: 100%;
-  top: 0;
+  top: 115px;
   left: 0;
   right: 0;
   bottom: 0;

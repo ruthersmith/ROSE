@@ -91,6 +91,14 @@ class Game(object):
         else:
             reactor.callLater(0, self.update_clients)
 
+    def remove_losers(self,winner):
+        #self.hub.remove_loser_client(winner)
+        for player in self.players:
+            if (player != winner):
+                self.remove_player(player)
+            else:
+                log.info('Keeping Winner')
+
     def drive_player(self, name, info):
         log.info('drive_player: %r %r', name, info)
         if name not in self.players:

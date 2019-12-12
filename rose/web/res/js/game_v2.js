@@ -214,6 +214,42 @@ function drawFinishLine() {
 	getGameContext().drawImage(config.resources.objects.finishLineImages['line'], 0, y);
 }
 
+function handleGameOver() {
+	if (config.payload.started){
+		config.everStarted = true; //records if the game started at any point
+	}
+	if (config.everStarted && config.payload.timeleft < 1){
+		setMessage("Game Over");
+		addKillUserbtn();
+	}
+}
+
+function killLosers() {
+	let winner = findWinner();
+	post('admin', 'winneris=' + winner, setMessage("Losers remove from game, only Highest score stay"));
+}
+
+/*
+	function find winner. finds the first player with the highest score
+	does not consider a draw
+ */
+function findWinner() {
+	let scoreBoard = {};
+	config.payload.players.forEach(function (item,index) {
+		scoreBoard[item.name] = item.score;
+	});
+
+	let scoreArr = Object.values(scoreBoard);
+	return Object.keys(scoreBoard).find(key => scoreBoard[key] === Math.max(...scoreArr));
+}
+
+function addKillUserbtn() {
+	var btn = document.createElement("BUTTON");
+	btn.innerHTML = "Disconnect Losers";
+	btn.className += " btn-outline-light btn btn-link float-right";
+	btn.onclick = killLosers;
+	document.getElementById('message').appendChild(btn);
+}
 function handleWebSocketMessageEvent(event) {
 	msg = JSON.parse(event.data);
 	console.log(msg);
@@ -227,6 +263,8 @@ function handleWebSocketMessageEvent(event) {
 	updateTimeleftDisplay(payload.timeleft);
 	updateStartedDisplay(payload.started);
 	updatePlayerDisplay(payload.players);
+	handleGameOver();
+
 
 	updateRaceFinishScreen(payload.players);
 

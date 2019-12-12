@@ -46,12 +46,14 @@ var ROSE = (function() {
 
         // Update
         this.controller.update(state);
+        this.controller.kill_users(state);
         this.rate.update(state.rate);
         this.dashboard.update(state);
         this.track.update(state);
         this.obstacles.update(state);
         this.cars.update(state);
         this.finish_line.update(state);
+
 
         // Draw
         this.dashboard.draw(this.context);
@@ -107,7 +109,37 @@ var ROSE = (function() {
             event.preventDefault();
             self.stop();
         });
+
+          $("#kill_losers").click(function(event) {
+            event.preventDefault();
+           self.kill_users();
+        });
     }
+
+    Controller.prototype.kill_users = function(state) {
+        let scoreBoard = {};
+        if (state !== undefined){
+            this.state = state;
+        }
+        if (this.state.timeleft ===0 ){
+            this.state.players.forEach(function (item,index) {
+                scoreBoard[item.name] = item.score;
+            })
+        let scoreArr = Object.values(scoreBoard);
+        let winner = Object.keys(scoreBoard).find(key => scoreBoard[key] === Math.max(...scoreArr));
+        console.log(winner);
+        console.log(this.state.players);
+
+          $.post("admin", { winneris: winner})
+            .done(function() {
+                console.log('done')
+            })
+            .fail(function(xhr) {
+                console.log("fail");
+            });
+        }
+
+    };
 
     Controller.prototype.start = function() {
         var self = this;
@@ -243,7 +275,12 @@ var ROSE = (function() {
     Dashboard.prototype.update = function(state) {
         this.players = state.players;
         this.timeleft = state.timeleft;
-    }
+        if (this.timeleft > 0){
+              $("#kill_losers").attr("disabled", "disabled");
+        }else{
+            $("#kill_losers").removeAttr("disabled");
+        }
+    };
 
     Dashboard.prototype.draw = function(ctx) {
 

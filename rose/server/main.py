@@ -23,6 +23,7 @@ def main():
     watcher = net.WatcherFactory(wsuri, h)
     root.putChild(b'ws', WebSocketResource(watcher))
     root.putChild(b'admin', net.WebAdmin(g))
+    root.putChild(b'score_record', net.ScoreRecorder())
     root.putChild(b'rpc2', net.CliAdmin(g))
     site = server.Site(root)
     reactor.listenTCP(config.web_port, site)

@@ -1,4 +1,4 @@
-import logging
+import logging, os
 
 from twisted.internet import protocol
 from twisted.protocols import basic
@@ -39,8 +39,10 @@ class Hub(object):
 
     def add_watcher(self, watcher):
         self.clients.add(watcher)
-        msg = message.Message("update", self.game.state())
-        watcher.send_message(bytes(str(msg), 'utf-8'))
+        game_state = message.Message("update", self.game.state())
+        game_history = message.Message('history', {'todo': True})
+        watcher.send_message(bytes(str(game_state), 'utf-8'))
+        watcher.send_message(bytes(str(game_history), 'utf-8'))
 
     def remove_watcher(self, watcher):
         self.clients.discard(watcher)
@@ -170,6 +172,19 @@ class CliAdmin(xmlrpc.XMLRPC):
     def xmlrpc_set_rate(self, rate):
         self.game.rate = rate
 
+class ScoreRecorder(resource.Resource):
+    def __init__(self):
+        super().__init__()
+    def render_POST(self, request):
+        if b'name' in request.args and b'score' in request.args:
+            name = request.args[b'name'][0].decode()
+            score = request.args[b'score'][0].decode()
+            open('highest_score.txt', 'w+', encoding = 'utf8').write(f'{name},{score}')
+            return b''
+        if b'fetch' in request.args:
+            if not os.path.isfile('highest_score.txt'):
+                return bytes('', 'utf-8')
+            return bytes(open('highest_score.txt').read(), 'utf-8')
 
 class WebAdmin(resource.Resource):
 

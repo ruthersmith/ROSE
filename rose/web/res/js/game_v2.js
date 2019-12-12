@@ -31,6 +31,7 @@ window.onload = function () {
 		'status': {}
 	};
 	preloadResources();
+	getHighestScoreDisplay();
 	loadingTimer = setTimeout(function () {
 		if (!config.resources.status.preloadSet) {
 			return;
@@ -42,9 +43,6 @@ window.onload = function () {
 		config.carImages = initalizeResources('carImages');
 		const websocket = new WebSocket('ws://' + window.location.hostname + ':8880/ws');
 		document.getElementById('loading').remove();
-		/*websocket.onopen = function () {
-			console.log ('websocket connected!');
-		};*/
 		websocket.onmessage = handleWebSocketMessageEvent;
 	}, 300);
 	controlButton.onclick = handleControlButtonClickEvent;
@@ -110,6 +108,23 @@ function handleFpsDecreaseClickEvent() {
 function handleFpsIncreaseClickEvent() {
 	post('admin', 'rate=' + (getFpsDisplay() + 1));
 }
+function recordHighestScore(name, score) {
+	post('score_record', 'name=' + name + '&score=' + score);
+}
+function getHighestScoreDisplay() {
+	post('score_record', 'fetch=1', function () {
+		if (this.response == '') {
+			document.getElementById('highest_score').innerText = '0';
+			document.getElementById('highest_score_creator').innerText = 'no one';
+			config['highestScore'] = 0;
+		} else {
+			const response = this.response.split(',');
+			config['highestScore'] = response[1];
+			document.getElementById('highest_score').innerText = config.highestScore;
+			document.getElementById('highest_score_creator').innerText = response[0];
+		}
+	});
+}
 function getFpsDisplay() {
 	return config.payload.rate;
 }
@@ -145,6 +160,12 @@ function updatePlayerDisplay(players) {
 		row.appendChild(name);
 		row.appendChild(score);
 		playerListBody.appendChild(row);
+		console.log(config.highestScore);
+		if (config.highestScore < player.score) {
+			config.highestScore = player.score;
+			recordHighestScore(player.name, player.score);
+			getHighestScoreDisplay();
+		}
 	}
 	setMessage('');
 }
